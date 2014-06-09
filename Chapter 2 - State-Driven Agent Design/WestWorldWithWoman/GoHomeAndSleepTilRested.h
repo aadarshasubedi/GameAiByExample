@@ -1,0 +1,43 @@
+// May, 2014 PAULO BRUNO DE SOUSA SERAFIM, Fortaleza - CE, Brasil
+// Implementation of Mat Buckland's Programming Game AI by Example
+// (C) 2005, Wordware Publishing, Inc. All Rights Reserved
+
+#ifndef __GO_HOME_AND_SLEEP_TIL_RESTED_H__
+#define __GO_HOME_AND_SLEEP_TIL_RESTED_H__
+
+#include "State.h"
+#include <string>
+
+class Miner;
+
+class GoHomeAndSleepTilRested : public State<Miner>
+{
+    public:
+    
+        virtual ~GoHomeAndSleepTilRested() {}
+
+        static GoHomeAndSleepTilRested* Instance()
+        {
+            static GoHomeAndSleepTilRested instance;
+            return &instance;
+        }
+
+        virtual void Enter(Miner* pMiner);
+        
+        virtual void Execute(Miner* pMiner);
+        
+        virtual void Exit(Miner* pMiner);
+        
+    private:
+    
+        GoHomeAndSleepTilRested() {}
+        
+        GoHomeAndSleepTilRested(GoHomeAndSleepTilRested const&);
+        
+        void operator=(GoHomeAndSleepTilRested const&);
+        
+        std::string GetNameOfEntity(int) {return "bob";}
+        
+};
+
+#endif // __GO_HOME_AND_SLEEP_TIL_RESTED_H__

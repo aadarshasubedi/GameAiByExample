@@ -1,0 +1,46 @@
+// May, 2014 PAULO BRUNO DE SOUSA SERAFIM, Fortaleza - CE, Brasil
+// Implementation of Mat Buckland's Programming Game AI by Example
+// (C) 2005, Wordware Publishing, Inc. All Rights Reserved
+
+#include "Miner.h"
+#include "VisitBankAndDepositGold.h"
+#include <iostream>
+
+void VisitBankAndDepositGold::Enter(Miner* pMiner)
+{
+    if (pMiner->Location() != bank)
+    {
+        std::cout << '\n' << GetNameOfEntity(pMiner->ID())
+                  << ": Goin' to the bank. Yes siree";
+                  
+        pMiner->ChangeLocation(bank);
+    }
+}
+
+void VisitBankAndDepositGold::Execute(Miner* pMiner)
+{
+    pMiner->AddToWealth(pMiner->GoldCarried());
+    
+    pMiner->SetGoldCarried(0);
+    
+    std::cout << '\n' << GetNameOfEntity(pMiner->ID())
+              << ": Depositin' gold. Total savings now: " << pMiner->Wealth();
+              
+    if (pMiner->Wealth() >= COMFORTABLE)
+    {
+        std::cout << '\n' << GetNameOfEntity(pMiner->ID())
+                  << ": Woohoo! Rich enough for now. Back home to mah li'l lady";
+        
+        pMiner->ChangeState(GoHomeAndSleepTilRested::Instance());
+    }
+    else
+    {
+        pMiner->ChangeState(EnterMineAndDigForNugget::Instance());
+    }
+}
+
+void VisitBankAndDepositGold::Exit(Miner* pMiner)
+{
+    std::cout << '\n' << GetNameOfEntity(pMiner->ID())
+              << ": Leavin' the bank";
+}

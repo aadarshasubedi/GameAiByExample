@@ -1,0 +1,118 @@
+// May, 2014 PAULO BRUNO DE SOUSA SERAFIM, Fortaleza - CE, Brasil
+// Implementation of Mat Buckland's Programming Game AI by Example
+// (C) 2005, Wordware Publishing, Inc. All Rights Reserved
+
+#ifndef __MINER_H__
+#define __MINER_H__
+
+#include "BaseGameEntity.h"
+#include "StateMachine.h"
+#include "State.h"
+
+#include "VisitBankAndDepositGold.h"
+#include "GoHomeAndSleepTilRested.h"
+#include "EnterMineAndDigForNugget.h"
+#include "QuenchThirst.h"
+
+const int MAX_THIRST = 5;
+const int MAX_GOLD = 3;
+const int MAX_FATIGUE = 5;
+const int MAX_MONEY = 5;
+const int COMFORTABLE = 15;
+
+enum location_type {
+    shack,
+    goldmine,
+    bank,
+    saloon
+};
+
+class Miner : public BaseGameEntity
+{
+    public:
+    
+        Miner(int id) : m_Location(shack),
+                        m_iGoldCarried(0),
+                        m_iMoneyInBank(0),
+                        m_iThirst(0),
+                        m_iFatigue(0),
+                        BaseGameEntity(id)
+        {
+            // set up state machine
+            m_pStateMachine = new StateMachine<Miner>(this);
+            
+            m_pStateMachine->SetCurrentState(GoHomeAndSleepTilRested::Instance());
+            m_pStateMachine->SetGlobalState(MinerGlobalState::Instance());
+        }
+        
+        virtual ~Miner() {delete m_pStateMachine;}
+
+        // this must be implemented
+        void Update()
+        {
+            ++m_iThirst;   
+            m_pStateMachine->Update();
+        }
+        
+        StateMachine<Miner>* GetFSM()const {return m_pStateMachine;}
+
+        // set location
+        void ChangeLocation(location_type newLocation) {m_Location = newLocation;}
+
+        // get location
+        location_type Location() {return m_Location;}
+        
+        // set gold carried
+        void SetGoldCarried(int gold) {m_iGoldCarried = gold;}
+        void AddToGoldCarried(int gold) {m_iGoldCarried += gold;}
+        
+        // get gold carried
+        int GoldCarried() {return m_iGoldCarried;}
+        bool PocketsFull() {return m_iGoldCarried/MAX_GOLD;}      
+        
+        // set fatigue
+        void IncreaseFatigue() {m_iFatigue += 1;}
+        void DecreaseFatigue() {m_iFatigue -= 1;}
+        
+        // get fatigue
+        bool Fatigued() {return m_iFatigue/MAX_FATIGUE;}
+        
+        // set thirst
+        void BuyAndDrinkAWhiskey() {m_iThirst = 0;}
+        
+        // get thirst
+        bool Thirsty() {return m_iThirst/MAX_THIRST;}
+        
+        // set money deposited
+        void AddToWealth(int wealth) {m_iMoneyInBank += wealth;}
+        
+        // get money deposited
+        int Wealth() {return m_iMoneyInBank;}
+       
+        void ChangeState(State<Miner>* newState)
+        {
+            m_pStateMachine->ChangeState(newState);
+        }
+
+    private:
+    
+        // an instance of the state machine class
+        StateMachine<Miner>* m_pStateMachine;
+        
+        // the place where the miner is currently situated
+        location_type m_Location;
+        
+        // how many nuggets the miner has in his pockets
+        int m_iGoldCarried;
+        
+        // how much money the miner has deposited in the bank
+        int m_iMoneyInBank;
+        
+        // the higher the value, the thirstier the miner
+        int m_iThirst;
+        
+        // the higher the value, the more tired the miner
+        int m_iFatigue;
+};
+
+#endif // __MINER_H__

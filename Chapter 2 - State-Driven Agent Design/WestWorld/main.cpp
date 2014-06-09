@@ -1,0 +1,19 @@
+// May, 2014 PAULO BRUNO DE SOUSA SERAFIM, Fortaleza - CE, Brasil
+// Implementation of Mat Buckland's Programming Game AI by Example
+// (C) 2005, Wordware Publishing, Inc. All Rights Reserved
+
+#include "Miner.h"
+
+#define MAX_ITERATIONS 100
+
+int main (int narg, char const* args[])
+{
+    Miner miner(13);
+
+    for (unsigned int i = 0; i < 100; ++i)
+    {
+        miner.Update();
+    }
+    
+    return 0;
+}
